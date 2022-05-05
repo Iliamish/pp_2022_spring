@@ -9,7 +9,7 @@
 
 TEST(ShellTest, test_1) {
     std::vector<int> vec1, vec2;
-    int N = 1000;
+    int N = 100;
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
@@ -27,7 +27,7 @@ TEST(ShellTest, test_1) {
 
 TEST(ShellTest, test_2) {
     std::vector<int> vec1, vec2;
-    int N = 10000;
+    int N = 100;
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
@@ -45,7 +45,7 @@ TEST(ShellTest, test_2) {
 
 TEST(ShellTest, test_3) {
     std::vector<int> vec1, vec2;
-    int N = 10000;
+    int N = 100;
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
@@ -63,7 +63,7 @@ TEST(ShellTest, test_3) {
 
 TEST(ShellTest, test_4) {
     std::vector<int> vec1, vec2;
-    int N = 10000;
+    int N = 100;
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
@@ -85,7 +85,7 @@ TEST(ShellTest, test_4) {
 
 TEST(ShellTest, test_5) {
     std::vector<int> vec1, vec2;
-    int N = 50000;
+    int N = 100;
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
