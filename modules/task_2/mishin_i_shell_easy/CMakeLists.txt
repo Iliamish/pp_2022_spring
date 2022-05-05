@@ -1,10 +1,10 @@
+# easter egg
 get_filename_component(ProjectId ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-if ( USE_TBB )
-    set(ProjectId "${ProjectId}_tbb")
+if ( USE_OMP )
+    set(ProjectId "${ProjectId}_omp")
     project( ${ProjectId} )
     message( STATUS "-- " ${ProjectId} )
-
     file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
 
     set(PACK_LIB "${ProjectId}_lib")
@@ -13,11 +13,6 @@ if ( USE_TBB )
     add_executable( ${ProjectId} ${ALL_SOURCE_FILES} )
 
     target_link_libraries(${ProjectId} ${PACK_LIB})
-    if( WIN32 )
-        target_link_libraries(${ProjectId} ${TBB_IMPORTED_TARGETS})
-    else( WIN32 )
-        target_link_libraries(${ProjectId} ${TBB_LIBRARIES})
-    endif( WIN32 )
     target_link_libraries(${ProjectId} gtest gtest_main)
 
     enable_testing()
@@ -57,6 +52,6 @@ if ( USE_TBB )
             ${ProjectId}
             ${ARGS_FOR_CHECK_COUNT_TESTS}
     )
-else( USE_TBB )
+else( USE_OMP )
     message( STATUS "-- ${ProjectId} - NOT BUILD!"  )
-endif( USE_TBB )
+endif( USE_OMP )

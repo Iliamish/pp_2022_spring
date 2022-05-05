@@ -1,7 +1,7 @@
 // Copyright 2022 Mishin Ilya
 
 #include <iostream>
-#include "../../../modules/task_3/mishin_i_shell_easy/shell.hpp"
+#include "../../../modules/task_2/mishin_i_shell_easy/shell.hpp"
 
 
 std::vector<int> getRandomVector(int size) {

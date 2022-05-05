@@ -9,12 +9,12 @@
 
 TEST(ShellTest, test_1) {
     std::vector<int> vec1, vec2;
-    int N = 1000;
+    int N = 10000;
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
-    ShellSortTBB(vec1.begin(), vec1.end(), std::less<int>());
-    std::cout << "TBB time: " << static_cast<float>(clock() -
+    ShellSortOMP(vec1.begin(), vec1.end(), std::less<int>());
+    std::cout << "OMP time: " << static_cast<float>(clock() -
     start) / CLOCKS_PER_SEC << std::endl;
 
     start = clock();
@@ -31,8 +31,8 @@ TEST(ShellTest, test_2) {
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
-    ShellSortTBB(vec1.begin(), vec1.end(), std::less<int>());
-    std::cout << "TBB time: " << static_cast<float>(clock() -
+    ShellSortOMP(vec1.begin(), vec1.end(), std::less<int>());
+    std::cout << "OMP time: " << static_cast<float>(clock() -
     start) / CLOCKS_PER_SEC << std::endl;
 
     start = clock();
@@ -49,8 +49,8 @@ TEST(ShellTest, test_3) {
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
-    ShellSortTBB(vec1.begin(), vec1.end(), std::greater<int>());
-    std::cout << "TBB time: " << static_cast<float>(clock() -
+    ShellSortOMP(vec1.begin(), vec1.end(), std::greater<int>());
+    std::cout << "OMP time: " << static_cast<float>(clock() -
     start) / CLOCKS_PER_SEC << std::endl;
 
     start = clock();
@@ -67,10 +67,10 @@ TEST(ShellTest, test_4) {
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
-    ShellSortTBB(vec1.begin(), vec1.end(), [](int a, int b) {
+    ShellSortOMP(vec1.begin(), vec1.end(), [](int a, int b) {
         return a < b;
     });
-    std::cout << "TBB time: " << static_cast<float>(clock() -
+    std::cout << "OMP time: " << static_cast<float>(clock() -
     start) / CLOCKS_PER_SEC << std::endl;
 
     start = clock();
@@ -89,10 +89,10 @@ TEST(ShellTest, test_5) {
     vec1 = getRandomVector(N);
     vec2 = vec1;
     auto start = clock();
-    ShellSortTBB(vec1.begin(), vec1.end(), [](int a, int b) {
+    ShellSortOMP(vec1.begin(), vec1.end(), [](int a, int b) {
         return a > b;
     });
-    std::cout << "TBB time: " << static_cast<float>(clock() -
+    std::cout << "OMP time: " << static_cast<float>(clock() -
     start) / CLOCKS_PER_SEC << std::endl;
 
     start = clock();

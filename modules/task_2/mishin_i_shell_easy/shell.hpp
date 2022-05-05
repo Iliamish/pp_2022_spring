@@ -1,12 +1,11 @@
 // Copyright 2022 Mishin Ilya
-#ifndef MODULES_TASK_3_MISHIN_I_SHELL_EASY_SHELL_HPP_
-#define MODULES_TASK_3_MISHIN_I_SHELL_EASY_SHELL_HPP_
-#include <tbb/tbb.h>
+#ifndef MODULES_TASK_2_MISHIN_I_SHELL_EASY_SHELL_HPP_
+#define MODULES_TASK_2_MISHIN_I_SHELL_EASY_SHELL_HPP_
+#include <omp.h>
 #include <random>
 #include <vector>
 #include <utility>
 #include <algorithm>
-#include <cassert>
 
 template< typename RandomAccessIterator, typename Comparator>
 void ShellSortSeq(RandomAccessIterator first,
@@ -18,23 +17,60 @@ void ShellSortSeq(RandomAccessIterator first,
 }
 
 template< typename RandomAccessIterator, typename Comparator>
-void ShellSortTBB(RandomAccessIterator first,
-                  RandomAccessIterator last, Comparator comp) {
-    using my_range = std::pair<std::size_t, std::size_t>;
-    tbb::parallel_deterministic_reduce(
-        tbb::blocked_range<int>(0, last - first, 500), my_range(),
-        [&](const tbb::blocked_range<int>& r, my_range v) -> my_range {
-            v = std::make_pair(r.begin(), r.end());
-            ShellSortSeq(first + v.first, first + v.second, comp);
-            return v;
-    },
-        [&](my_range v1, my_range v2) -> my_range {
-            assert(v1.second == v2.first);
-            std::inplace_merge(first + v1.first,
-                        first + v1.second, first + v2.second, comp);
-            return {v1.first, v2.second};
-        });
+void ShellSortOMP(RandomAccessIterator first,
+               RandomAccessIterator last, Comparator comp) {
+    std::size_t input_size = last - first;
+    size_t N;
+    #pragma omp parallel
+    {
+        N = omp_get_num_threads();
+    }
+    std::vector<std::size_t> block_sizes(N);
+    for (std::size_t i = 0; i < N; ++i) {
+        std::size_t size = input_size / N;
+        std::size_t additional_element = 0;
+        if (i < input_size % N) {
+            additional_element = 1;
+        }
+        block_sizes[i] = size + additional_element;
+    }
+    auto get_block_borders =
+        [&block_sizes](std::size_t block, std::size_t n) {
+            std::size_t start = 0;
+            for (std::size_t i = 0; i < block; ++i) {
+                start += block_sizes[i];
+            }
+            return std::make_pair(start, start + block_sizes[block]);
+        };
+    std::size_t blocks;
+    #pragma omp parallel
+    {
+        blocks = omp_get_num_threads();
+        std::size_t block = omp_get_thread_num();
+        auto borders = get_block_borders(block, blocks);
+        ShellSortSeq(first + borders.first, first + borders.second, comp);
+    }
+
+    for (std::size_t merge_step = 1; merge_step < blocks; merge_step *= 2) {
+        int stop = static_cast<int>(blocks - merge_step);
+        #pragma omp parallel for
+        for (int i = 0; i < stop; i+= merge_step * 2) {
+            auto borders1 = get_block_borders(i, blocks);
+            auto borders2 = get_block_borders(i + merge_step , blocks);
+            assert(borders1.second == borders2.first);
+            std::size_t start = borders1.first;
+            std::size_t mid = borders1.second;
+            std::size_t finish = borders2.second;
+            finish = std::min(finish, input_size);
+            std::inplace_merge(first+start, first+mid, first+finish, comp);
+        }
+
+        for (int i = 0; i < stop; i+= merge_step * 2) {
+            block_sizes[i] = block_sizes[i] + block_sizes[i+merge_step];
+            block_sizes[i+merge_step] = 0;
+        }
+    }
 }
 
 std::vector<int> getRandomVector(int size);
-#endif  // MODULES_TASK_3_MISHIN_I_SHELL_EASY_SHELL_HPP_
+#endif  // MODULES_TASK_2_MISHIN_I_SHELL_EASY_SHELL_HPP_
